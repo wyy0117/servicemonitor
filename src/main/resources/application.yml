@@ -1,0 +1,15 @@
+service:
+  monitors[0]:
+    webHook: "https://oapi.dingtalk.com/robot/send?access_token=xxx"
+    url: http://localhost:9000
+    method: GET
+    period: 10000
+    returnType: "[B"
+    textContent:
+      content: nginx宕机,请及时恢复。
+      atMobiles: 155xxx
+logging:
+  level:
+    com: debug
+  file:
+    path: ./logs/.
