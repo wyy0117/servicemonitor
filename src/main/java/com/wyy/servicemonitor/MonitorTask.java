@@ -8,6 +8,7 @@ import com.wyy.servicemonitor.config.Monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -56,7 +57,7 @@ public class MonitorTask extends TimerTask {
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (ResourceAccessException e) {
+        } catch (ResourceAccessException | HttpServerErrorException e) {
             OapiRobotSendRequest oapiRobotSendRequest = monitor.getContent().buildRequest();
             try {
                 client.execute(oapiRobotSendRequest);
