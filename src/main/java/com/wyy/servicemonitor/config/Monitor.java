@@ -102,18 +102,9 @@ public class Monitor {
         return this;
     }
 
-    public String getWebHook() {
-        return webHook;
-    }
-
-    public Monitor setWebHook(String webHook) {
-        this.webHook = webHook;
-        return this;
-    }
-
-    public String getUrl() throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
+    public String getWebHook() throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
         if (secret == null) {
-            return url;
+            return webHook;
         }
         Long timestamp = System.currentTimeMillis();
         System.out.println("timestamp = " + timestamp);
@@ -122,7 +113,16 @@ public class Monitor {
         mac.init(new SecretKeySpec(secret.getBytes("UTF-8"), "HmacSHA256"));
         byte[] signData = mac.doFinal(stringToSign.getBytes("UTF-8"));
         String sign = URLEncoder.encode(new String(Base64.getEncoder().encode(signData)), "UTF-8");
-        return url + "&timestamp=" + timestamp + "&sign=" + sign;
+        return webHook + "&timestamp=" + timestamp + "&sign=" + sign;
+    }
+
+    public Monitor setWebHook(String webHook) {
+        this.webHook = webHook;
+        return this;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public Monitor setUrl(String url) {

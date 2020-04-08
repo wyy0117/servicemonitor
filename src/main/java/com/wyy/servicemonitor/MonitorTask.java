@@ -12,6 +12,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.TimerTask;
 
 /**
@@ -28,7 +31,7 @@ public class MonitorTask extends TimerTask {
 
     DingTalkClient client = null;
 
-    public MonitorTask(Monitor monitor) {
+    public MonitorTask(Monitor monitor) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
         this.monitor = monitor;
 
         this.restTemplate = new RestTemplate();
