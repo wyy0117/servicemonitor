@@ -9,6 +9,7 @@
     service:
       monitors[0]: # 数组，可以有多个监控器
         webHook: "https://oapi.dingtalk.com/robot/send?access_token=" # 钉钉机器人的webHook
+        secret: xxx # 钉钉机器人的secret
         url: http://localhost:9000 # 要监控的地址
         method: GET # 监控器检测服务的url
         period: 10000 #每隔多少毫秒检测一次

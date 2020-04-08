@@ -1,6 +1,7 @@
 service:
   monitors[0]:
     webHook: "https://oapi.dingtalk.com/robot/send?access_token=xxx"
+    secret: xxx
     url: http://localhost:9000
     method: GET
     period: 10000

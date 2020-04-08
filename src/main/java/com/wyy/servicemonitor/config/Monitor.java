@@ -6,6 +6,14 @@ import com.wyy.servicemonitor.config.content.MarkDownContent;
 import com.wyy.servicemonitor.config.content.TextContent;
 import org.springframework.http.HttpMethod;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
 /**
  * @Date: 20-4-3
  * @Author: wyy
@@ -45,6 +53,11 @@ public class Monitor {
      */
     private long period;
 
+    /**
+     * 钉钉机器人的secret
+     */
+    private String secret;
+
     @Override
     public String toString() {
         return "Monitor{" +
@@ -58,7 +71,17 @@ public class Monitor {
                 ", textContent=" + textContent +
                 ", returnType='" + returnType + '\'' +
                 ", period=" + period +
+                ", secret='" + secret + '\'' +
                 '}';
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public Monitor setSecret(String secret) {
+        this.secret = secret;
+        return this;
     }
 
     public String getReturnType() {
@@ -88,8 +111,18 @@ public class Monitor {
         return this;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUrl() throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
+        if (secret == null) {
+            return url;
+        }
+        Long timestamp = System.currentTimeMillis();
+        System.out.println("timestamp = " + timestamp);
+        String stringToSign = timestamp + "\n" + secret;
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secret.getBytes("UTF-8"), "HmacSHA256"));
+        byte[] signData = mac.doFinal(stringToSign.getBytes("UTF-8"));
+        String sign = URLEncoder.encode(new String(Base64.getEncoder().encode(signData)), "UTF-8");
+        return url + "&timestamp=" + timestamp + "&sign=" + sign;
     }
 
     public Monitor setUrl(String url) {
