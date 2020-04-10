@@ -29,14 +29,10 @@ public class MonitorTask extends TimerTask {
 
     private RestTemplate restTemplate;
 
-    DingTalkClient client = null;
 
-    public MonitorTask(Monitor monitor) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+    public MonitorTask(Monitor monitor) {
         this.monitor = monitor;
-
         this.restTemplate = new RestTemplate();
-
-        this.client = new DefaultDingTalkClient(monitor.getWebHook());
     }
 
     @Override
@@ -51,22 +47,36 @@ public class MonitorTask extends TimerTask {
             Class<?> returnType = Class.forName(monitor.getReturnType());
             ResponseEntity response = restTemplate.exchange(monitor.getUrl(), monitor.getMethod(), entity, returnType);
             if (response.getStatusCode() != HttpStatus.OK) {
-                OapiRobotSendRequest oapiRobotSendRequest = monitor.getContent().buildRequest();
-                try {
-                    client.execute(oapiRobotSendRequest);
-                } catch (ApiException e) {
-                    e.printStackTrace();
-                }
+                sendMessage(monitor);
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (ResourceAccessException | HttpServerErrorException e) {
-            OapiRobotSendRequest oapiRobotSendRequest = monitor.getContent().buildRequest();
             try {
-                client.execute(oapiRobotSendRequest);
-            } catch (ApiException e1) {
-                e1.printStackTrace();
+                sendMessage(monitor);
+            } catch (NoSuchAlgorithmException ex) {
+                ex.printStackTrace();
+            } catch (InvalidKeyException ex) {
+                ex.printStackTrace();
+            } catch (UnsupportedEncodingException ex) {
+                ex.printStackTrace();
+            } catch (ApiException ex) {
+                ex.printStackTrace();
             }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
+    }
+
+    private void sendMessage(Monitor monitor) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException, ApiException {
+        DingTalkClient client = new DefaultDingTalkClient(monitor.getWebHook());
+        OapiRobotSendRequest oapiRobotSendRequest = monitor.getContent().buildRequest();
+        client.execute(oapiRobotSendRequest);
     }
 }
